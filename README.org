@@ -11,8 +11,6 @@
 - *Packaging*: Helm chart for the app
 - *CI/CD*: GitHub Actions to build/push images and deploy to cluster (minikube for demo; optional EKS/GKE/AKS)
 
-Goal: a single GitHub repo with code, manifests/Helm, CI configured, and a README with screenshots and a “how to run locally” section.
-
 * Quick prerequisite checklist
 Install (locally):
 - git
@@ -24,8 +22,8 @@ Install (locally):
   
 * Repo layout
 #+begin_src shell
-microservices-k8s/
-├─ README.md
+devops-k8s-project/
+├─ README.org
 ├─ .github/
 │  └─ workflows/
 │     └─ ci-cd.yml
