@@ -1,0 +1,55 @@
+* Project overview (To-do list)
+- 3 microservices (small, independent):
+  + *api* — front-end API (Node.js / Express or Flask)
+  + *users* — user service (CRUD, REST)
+  + *orders* — order service (CRUD, REST)
+- *Database*: PostgreSQL (one central DB or one per service — start with a single DB via PVC)
+- *Ingress*: HTTP routing with host/path rules
+- *Config*: ConfigMaps & Secrets
+- *Persistence*: PersistentVolumeClaim for Postgres
+- *Deployment*: Deployments + Services + Horizontal Pod Autoscaler (HPA)
+- *Packaging*: Helm chart for the app
+- *CI/CD*: GitHub Actions to build/push images and deploy to cluster (minikube for demo; optional EKS/GKE/AKS)
+
+Goal: a single GitHub repo with code, manifests/Helm, CI configured, and a README with screenshots and a “how to run locally” section.
+
+* Quick prerequisite checklist
+Install (locally):
+- git
+- Docker (or Docker Desktop)
+- kubectl
+- minikube or kind (I recommend kind for reproducible CI-friendly clusters)
+- helm (v3)
+- (optional) kubectl port-forward or kubectl proxy for demos
+  
+* Repo layout
+#+begin_src shell
+microservices-k8s/
+├─ README.md
+├─ .github/
+│  └─ workflows/
+│     └─ ci-cd.yml
+├─ charts/                        # Helm chart root (or use helm create)
+│  └─ microservices/
+├─ deploy/                        # Raw manifests (for learning/demo)
+│  ├─ namespace.yaml
+│  ├─ frontend-deployment.yaml
+│  ├─ users-deployment.yaml
+│  ├─ orders-deployment.yaml
+│  ├─ postgres-deployment.yaml
+│  └─ ingress.yaml
+├─ services/
+│  ├─ api/                        # example Node/Flask API
+│  │  ├─ Dockerfile
+│  │  ├─ src/
+│  │  └─ package.json
+│  ├─ users/
+│  └─ orders/
+├─ infra/
+│  └─ storageclass.yaml (optional)
+└─ docs/
+   └─ architecture.png
+#+end_src
+
+* WIP
+It is using Node.js Express service to replicate for =api=, =users=, =orders=.
