@@ -169,16 +169,21 @@ kind create cluster --name micro-cluster
 # If using nginx-ingress for local
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.1/deploy/static/provider/kind/deploy.yaml
 
-# OR pull from dockerhub using docker-compose
+# Pull images from dockerhub
+docker pull twilight4/api-service:0.1.0
+docker pull twilight4/users-service:0.1.0
+docker pull twilight4/orders-service:0.1.0
 
-# OR build images locally
+# OR build imagess locally
 docker build -t twilight4/users:0.1.0 ./services/users-service
 docker build -t twilight4/api:0.1.0 ./services/api-gateway
 docker build -t twilight4/orders:0.1.0 ./services/orders-service
 
-# Verify images were built and load into kind
+# Verify images were built/pulled and load into kind
 docker images | grep twilight4
 kind load docker-image twilight4/users:0.1.0 --name micro-cluster
+kind load docker-image twilight4/api:0.1.0 --name micro-cluster
+kind load docker-image twilight4/orders:0.1.0 --name micro-cluster
 #+end_src
 
 ** Using minikube
@@ -186,15 +191,18 @@ kind load docker-image twilight4/users:0.1.0 --name micro-cluster
 minikube start
 minikube addons enable ingress
 
-# Pull from dockerhub using docker-compose
+# Pull images from dockerhub
+docker pull twilight4/api-service:0.1.0
+docker pull twilight4/users-service:0.1.0
+docker pull twilight4/orders-service:0.1.0
 
-# OR build image locally
+# OR build images locally
 eval $(minikube docker-env)
-docker build -t twilight4/users:0.1.0 ./services/users-service
-docker build -t twilight4/api:0.1.0 ./services/api-gateway
-docker build -t twilight4/orders:0.1.0 ./services/orders-service
+docker build -t twilight4/users-service:0.1.0 ./services/users-service
+docker build -t twilight4/api-service:0.1.0 ./services/api-gateway
+docker build -t twilight4/orders-service:0.1.0 ./services/orders-service
 
-# Verify images were built
+# Verify images were built/pulled
 docker images | grep twilight4
 #+end_src
 
