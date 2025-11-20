@@ -1,14 +1,14 @@
 * Table of Contents :toc:
-- [[#project-overview][Project overview]]
+- [[#project-overview][Project Overview]]
   - [[#kubernetes-architecture-diagram][Kubernetes Architecture Diagram]]
-  - [[#quick-prerequisite-checklist][Quick prerequisite checklist]]
-  - [[#repo-layout][Repo layout]]
-- [[#create-and-deploy-kubernetes-cluster-locally][Create and Deploy kubernetes cluster locally]]
+  - [[#quick-prerequisite-checklist][Quick Prerequisite Checklist]]
+  - [[#repository-layout][Repository Layout]]
+- [[#create-and-deploy-kubernetes-cluster-locally][Create and deploy kubernetes cluster locally]]
   - [[#optional-manually-build-and-test-locally-minimal-microservices][(Optional) Manually build and test locally minimal microservices]]
   - [[#create-cluster][Create Cluster]]
   - [[#deploy-cluster][Deploy Cluster]]
 
-* Project overview
+* Project Overview
 - 3 microservices (small, independent):
   + *api* — front-end API (Node.js / Express)
   + *users* — user service (CRUD, REST)
@@ -22,8 +22,35 @@
 - *CI/CD*: GitHub Actions to install dependencies, build and push images to DockerHub
 
 ** [[./docs/architecture.png][Kubernetes Architecture Diagram]]
+#+begin_src shell
+                 ┌───────────────┐
+                 │  Ingress      │
+                 │ (host/path)   │
+                 └──────┬────────┘
+                        │
+      ┌─────────────────┼─────────────────┐
+      │                 │                 │
+┌─────▼──────┐    ┌─────▼─────┐     ┌─────▼─────┐
+│ API-Gateway│    │ Users Svc │     │ Orders Svc│
+│ Deployment │    │ Deployment│     │ Deployment│
+│ Service    │    │ Service   │     │ Service   │
+└─────┬──────┘    └─────┬─────┘     └─────┬─────┘
+      │                 │                 │
+      └─────────────────┴─────────────────┘
+                        │
+                ┌───────▼────────┐
+                │ PostgreSQL DB  │
+                │ Deployment     │
+                │ PVC / PV       │
+                └────────────────┘
 
-** Quick prerequisite checklist
+Additional:
+- ConfigMaps & Secrets injected into Deployments
+- HPA monitoring Deployments for scaling
+- Docker images built & pushed via GitHub Actions CI/CD
+#+end_src
+
+** Quick Prerequisite Checklist
 Install (locally):
 - git
 - Docker
@@ -31,7 +58,7 @@ Install (locally):
 - minikube or kind
 - helm (v3)
   
-** Repo layout
+** Repository Layout
 #+begin_src shell
 devops-k8s-project/
 ├─ README.org
@@ -79,7 +106,7 @@ devops-k8s-project/
    └─ architecture.png
 #+end_src
 
-* Create and Deploy kubernetes cluster locally
+* Create and deploy kubernetes cluster locally
 ** (Optional) Manually build and test locally minimal microservices
 It is using Node.js Express service to replicate for =api=, =users=, =orders=.
 
@@ -147,7 +174,7 @@ For ingress controller, you must modify =/etc/hosts= to point to =micro.local= t
 # 192.168.49.2 micro.local
 #+end_src
 
-*** Using kind
+*** Using Kind
 #+begin_src shell
 kind create cluster --name micro-cluster
 
@@ -171,7 +198,7 @@ kind load docker-image twilight4/api:0.1.0 --name micro-cluster
 kind load docker-image twilight4/orders:0.1.0 --name micro-cluster
 #+end_src
 
-*** Using minikube
+*** Using Minikube
 #+begin_src shell
 minikube start
 minikube addons enable ingress
