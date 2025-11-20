@@ -1,3 +1,6 @@
 /services/api-gateway/node_modules/
+/services/api-gateway/package-lock.json
 /services/users-service/node_modules/
+/services/users-service/package-lock.json
 /services/orders-service/node_modules/
+/services/orders-service/package-lock.json
