@@ -3,15 +3,10 @@
   - [[#kubernetes-architecture-diagram][Kubernetes Architecture Diagram]]
   - [[#quick-prerequisite-checklist][Quick prerequisite checklist]]
   - [[#repo-layout][Repo layout]]
-- [[#optional-manually-build-and-test-locally-minimal-microservices][(Optional) Manually build and test locally minimal microservices]]
-- [[#create-cluster][Create Cluster]]
-  - [[#prerequisite][Prerequisite]]
-  - [[#using-kind][Using kind]]
-  - [[#using-minikube][Using minikube]]
-- [[#deploy-cluster][Deploy Cluster]]
-  - [[#using-helm-packaging][Using Helm packaging]]
-  - [[#using-kubectl][Using kubectl]]
-  - [[#test-endpoints][Test endpoints]]
+- [[#create-and-deploy-kubernetes-cluster-locally][Create and Deploy kubernetes cluster locally]]
+  - [[#optional-manually-build-and-test-locally-minimal-microservices][(Optional) Manually build and test locally minimal microservices]]
+  - [[#create-cluster][Create Cluster]]
+  - [[#deploy-cluster][Deploy Cluster]]
 
 * Project overview
 - 3 microservices (small, independent):
