@@ -29,6 +29,16 @@ devops-k8s-project/
 │     └─ ci-cd.yml
 ├─ charts/
 │  └─ microservices/
+│     ├──  templates
+│     │   ├──  api-gateway.yaml
+│     │   ├──  ingress.yaml
+│     │   ├──  postgres-pvc.yaml
+│     │   ├──  postgres.yaml
+│     │   ├──  orders.yaml
+│     │   ├──  users.yaml
+│     ├──  charts
+│     ├──  values.yaml
+│     └──  Chart.yaml
 ├─ deploy/
 │  ├─ users-deployment.yaml
 │  ├─ orders-deployment.yaml
