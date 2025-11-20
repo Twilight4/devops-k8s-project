@@ -84,7 +84,8 @@ devops-k8s-project/
    └─ architecture.png
 #+end_src
 
-* (Optional) Manually build and test locally minimal microservices
+* Create and Deploy kubernetes cluster locally
+** (Optional) Manually build and test locally minimal microservices
 It is using Node.js Express service to replicate for =api=, =users=, =orders=.
 
 #+begin_src shell
@@ -131,8 +132,8 @@ curl http://localhost:3000/orders
 curl http://localhost:3000/health
 #+end_src
 
-* Create Cluster
-** Prerequisite
+** Create Cluster
+*** Prerequisite
 Clone the repo:
 #+begin_src shell
 # Clone the repo
@@ -151,7 +152,7 @@ For ingress controller, you must modify =/etc/hosts= to point to =micro.local= t
 # 192.168.49.2 micro.local
 #+end_src
 
-** Using kind
+*** Using kind
 #+begin_src shell
 kind create cluster --name micro-cluster
 
@@ -175,7 +176,7 @@ kind load docker-image twilight4/api:0.1.0 --name micro-cluster
 kind load docker-image twilight4/orders:0.1.0 --name micro-cluster
 #+end_src
 
-** Using minikube
+*** Using minikube
 #+begin_src shell
 minikube start
 minikube addons enable ingress
@@ -195,8 +196,8 @@ docker build -t twilight4/orders-service:0.1.0 ./services/orders-service
 docker images | grep twilight4
 #+end_src
 
-* Deploy Cluster
-** Using Helm packaging
+** Deploy Cluster
+*** Using Helm packaging
 #+begin_src shell
 # Install
 helm install my-micro charts/microservices -n demo --create-namespace
@@ -208,7 +209,7 @@ helm upgrade my-micro charts/microservices -n demo
 helm uninstall my-micro -n demo
 #+end_src
 
-** Using kubectl
+*** Using kubectl
 #+begin_src shell
 # Apply manifests
 kubectl apply -f deploy/
@@ -216,7 +217,7 @@ kubectl get pods -n default
 kubectl get ingress
 #+end_src
 
-** Test endpoints
+*** Test endpoints
 #+begin_src shell
 # Test URLs
 minikube service list
