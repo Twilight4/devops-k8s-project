@@ -1,6 +1,6 @@
 * Project overview (To-do list)
 - 3 microservices (small, independent):
-  + *api* — front-end API (Node.js / Express or Flask)
+  + *api* — front-end API (Node.js / Express)
   + *users* — user service (CRUD, REST)
   + *orders* — order service (CRUD, REST)
 - *Database*: PostgreSQL (one central DB or one per service — start with a single DB via PVC)
@@ -93,7 +93,7 @@ docker build -t <YOUR_HUB_NAME>/api:0.1.0 .
 docker run -it -p 3000:3000 \
   -e USERS_URL=http://172.17.0.1:3001 \
   -e ORDERS_URL=http://172.17.0.1:3002 \
-  twilight4/api:0.1.0
+  <YOUR_HUB_NAME>/api:0.1.0
 
 # test the api-gateway image
 docker ps
