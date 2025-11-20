@@ -49,16 +49,21 @@ devops-k8s-project/
 │  └─ microservices/
 │     ├── templates
 │     │   ├── api-gateway.yaml
+│     │   ├── hpa-orders.yaml
+│     │   ├── hpa-users.yaml
+│     │   ├── hpa-api.yaml
 │     │   ├── ingress.yaml
+│     │   ├── orders.yaml
 │     │   ├── postgres-pvc.yaml
 │     │   ├── postgres.yaml
-│     │   ├── orders.yaml
 │     │   ├── users.yaml
-│     ├── charts
 │     ├── values.yaml
 │     └── Chart.yaml
 ├─ deploy/
 │  ├─ users-deployment.yaml
+│  ├─ hpa-orders-deployment.yaml
+│  ├─ hpa-users-deployment.yaml
+│  ├─ hpa-api-deployment.yaml
 │  ├─ orders-deployment.yaml
 │  ├─ api-gateway-deployment.yaml
 │  ├─ postgres-deployment.yaml
