@@ -115,7 +115,7 @@ curl http://localhost:3000/health
 Create a secret for DB password:
 #+begin_src shell
 # Create secret
-kubectl create secret generic pg-secret --from-literal=password='changeme'
+kubectl create secret generic pg-secret --from-literal=password='changeme' -n <demo/default>
 #+end_src
 
 For ingress controller, you must modify =/etc/hosts= to point to =micro.local= to the cluster LB:
