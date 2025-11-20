@@ -37,17 +37,69 @@ devops-k8s-project/
 │  ├─ postgres-deployment.yaml
 │  └─ ingress.yaml
 ├─ services/
-│  ├─ api/                        # example Node/Flask API
+│  ├─ users-service/
 │  │  ├─ Dockerfile
 │  │  ├─ src/
+│  │  ├─ package-lock.json (generated)
 │  │  └─ package.json
-│  ├─ users/
-│  └─ orders/
+│  ├─ orders-service/
+│  │  ├─ Dockerfile
+│  │  ├─ src/
+│  │  ├─ package-lock.json (generated)
+│  │  └─ package.json
+│  └─ api-gateway/
+│     ├─ Dockerfile
+│     ├─ src/
+│     ├─ package-lock.json (generated)
+│     └─ package.json
 ├─ infra/
 │  └─ storageclass.yaml (optional)
 └─ docs/
    └─ architecture.png
 #+end_src
 
-* WIP
+* Build and test locally minimal microservice
 It is using Node.js Express service to replicate for =api=, =users=, =orders=.
+
+#+begin_src shell
+# Log in to dockerhub
+docker login
+
+# Build and run the users image
+cd services/users-service/
+npm install                         # Run this command to generate package-lock.json file needed for docker build command
+docker build -t <YOUR_HUB_NAME>/users:0.1.0 .
+docker run -p 3001:3001 <YOUR_HUB_NAME>/users:0.1.0
+
+# test the users image
+docker ps
+curl http://localhost:3001/users
+
+# Build and run the orders image
+cd services/orders-service/
+npm install                        # Run this command to generate package-lock.json file needed for docker build command
+docker build -t <YOUR_HUB_NAME>/orders:0.1.0 .
+docker run -p 3002:3002 <YOUR_HUB_NAME>/orders:0.1.0
+
+# test the orders image
+docker ps
+curl http://localhost:3002/orders
+
+# Build and run the api-gateway image
+cd services/api-gateway/
+npm install                        # Run this command to generate package-lock.json file needed for docker build command
+docker build -t <YOUR_HUB_NAME>/api:0.1.0 .
+# To check docker's IP: ip route | grep docker (default on linux is 172.17.0.1)
+docker run -it -p 3000:3000 \
+  -e USERS_URL=http://172.17.0.1:3001 \
+  -e ORDERS_URL=http://172.17.0.1:3002 \
+  twilight4/api:0.1.0
+
+# test the api-gateway image
+docker ps
+curl http://localhost:3000/users
+curl http://localhost:3000/orders
+curl http://localhost:3000/health
+#+end_src
+
+* Kubernetes manifests (deployment + service + ingress)
