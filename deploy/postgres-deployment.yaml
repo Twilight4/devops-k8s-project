@@ -5,26 +5,41 @@ metadata:
 spec:
   replicas: 1
   selector:
-    matchLabels: { app: postgres }
+    matchLabels:
+      app: postgres
   template:
     metadata:
-      labels: { app: postgres }
+      labels:
+        app: postgres
     spec:
       containers:
-      - name: postgres
-        image: postgres:15
-        env:
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: pg-secret
-              key: password
-        ports:
-        - containerPort: 5432
-        volumeMounts:
-        - name: data
-          mountPath: /var/lib/postgresql/data
+        - name: postgres
+          image: postgres:15
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pg-secret
+                  key: password
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
       volumes:
-      - name: data
-        persistentVolumeClaim:
-          claimName: pgdata
+        - name: data
+          persistentVolumeClaim:
+            claimName: pgdata
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+spec:
+  selector:
+    app: postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP

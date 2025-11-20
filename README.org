@@ -27,14 +27,18 @@ devops-k8s-project/
 ├─ .github/
 │  └─ workflows/
 │     └─ ci-cd.yml
-├─ charts/                        # Helm chart root (or use helm create)
+├─ charts/
 │  └─ microservices/
-├─ deploy/                        # Raw manifests (for learning/demo)
-│  ├─ namespace.yaml
-│  ├─ frontend-deployment.yaml
+├─ deploy/
 │  ├─ users-deployment.yaml
+│  ├─ users-service.yaml
 │  ├─ orders-deployment.yaml
+│  ├─ orders-service.yaml
+│  ├─ api-gateway-deployment.yaml
+│  ├─ api-gateway-service.yaml
 │  ├─ postgres-deployment.yaml
+│  ├─ postgres-service.yaml
+│  ├─ postgres-pvc.yaml
 │  └─ ingress.yaml
 ├─ services/
 │  ├─ users-service/
@@ -52,8 +56,6 @@ devops-k8s-project/
 │     ├─ src/
 │     ├─ package-lock.json (generated)
 │     └─ package.json
-├─ infra/
-│  └─ storageclass.yaml (optional)
 └─ docs/
    └─ architecture.png
 #+end_src
@@ -65,11 +67,11 @@ It is using Node.js Express service to replicate for =api=, =users=, =orders=.
 # Log in to dockerhub
 docker login
 
-# Build and run the users image
+# Build and run the users image (I'm using my own hub name)
 cd services/users-service/
 npm install                         # Run this command to generate package-lock.json file needed for docker build command
-docker build -t <YOUR_HUB_NAME>/users:0.1.0 .
-docker run -p 3001:3001 <YOUR_HUB_NAME>/users:0.1.0
+docker build -t twilight4/users:0.1.0 .
+docker run -p 3001:3001 twilight4/users:0.1.0
 
 # test the users image
 docker ps
@@ -78,8 +80,8 @@ curl http://localhost:3001/users
 # Build and run the orders image
 cd services/orders-service/
 npm install                        # Run this command to generate package-lock.json file needed for docker build command
-docker build -t <YOUR_HUB_NAME>/orders:0.1.0 .
-docker run -p 3002:3002 <YOUR_HUB_NAME>/orders:0.1.0
+docker build -t twilight4/orders:0.1.0 .
+docker run -p 3002:3002 twilight4/orders:0.1.0
 
 # test the orders image
 docker ps
@@ -88,12 +90,12 @@ curl http://localhost:3002/orders
 # Build and run the api-gateway image
 cd services/api-gateway/
 npm install                        # Run this command to generate package-lock.json file needed for docker build command
-docker build -t <YOUR_HUB_NAME>/api:0.1.0 .
+docker build -t twilight4/api:0.1.0 .
 # To check docker's IP: ip route | grep docker (default on linux is 172.17.0.1)
 docker run -it -p 3000:3000 \
   -e USERS_URL=http://172.17.0.1:3001 \
   -e ORDERS_URL=http://172.17.0.1:3002 \
-  <YOUR_HUB_NAME>/api:0.1.0
+  twilight4/api:0.1.0
 
 # test the api-gateway image
 docker ps
@@ -102,4 +104,77 @@ curl http://localhost:3000/orders
 curl http://localhost:3000/health
 #+end_src
 
-* Kubernetes manifests (deployment + service + ingress)
+* Helm packaging
+#+begin_src shell
+# Install
+helm install my-micro charts/microservices -n demo --create-namespace
+
+# Upgrade
+helm upgrade my-micro charts/microservices -n demo
+
+# Uninstall
+helm uninstall my-micro -n demo
+#+end_src
+
+* Local cluster — create + deploy
+Create a secret for DB password:
+#+begin_src shell
+# Create secret
+kubectl create secret generic pg-secret --from-literal=password='changeme'
+#+end_src
+
+Using kind:
+#+begin_src shell
+kind create cluster --name micro-cluster
+
+# If using nginx-ingress for local:
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.1/deploy/static/provider/kind/deploy.yaml
+
+# Build images locally and load into kind:
+docker build -t twilight4/users:0.1.0 ./services/users-service
+kind load docker-image twilight4/users:0.1.0 --name micro-cluster
+#+end_src
+
+Using minikube:
+#+begin_src shell
+minikube start
+minikube addons enable ingress
+
+# Build image into minikube (locally)
+eval $(minikube docker-env)
+docker build -t twilight4/users:0.1.0 ./services/users-service
+docker build -t twilight4/api:0.1.0 ./services/api-gateway
+docker build -t twilight4/orders:0.1.0 ./services/orders-service
+
+# Verify images were built
+docker images | grep twilight4
+#+end_src
+
+For ingress controller, you must modify =/etc/hosts= to point to =micro.local= to the cluster LB
+Deploy and test endpoints:
+#+begin_src shell
+# Make sure /etc/hosts has
+# 192.168.49.2 micro.local
+
+# Apply manifests
+kubectl apply -f deploy/
+kubectl get pods -n default
+kubectl get ingress
+
+# Test URLs
+minikube service list
+
+# Users and Orders service (through API Gateway or directly)
+curl http://micro.local/api/users
+curl http://micro.local/api/orders
+# API Gateway health
+curl http://micro.local/api/health
+#+end_src
+
+* CI/CD with GitHub Actions (basic flow)
+The =.github/workflows/ci-cd.yml=:
+1. Builds Docker images
+2. Pushes images to Docker Hub / GitHub Container Registry
+3. Deploys to cluster (for demo, use =kubectl apply= to minikube/kind in a separate runner or use GitHub Actions runner with kubeconfig stored assecret; for production, use something like ArgoCD)
+
+Deployment step (simple): run =kubectl set image= or =helm upgrade= using a =kubeconfig= stored as secret. For learning demo, you can skip automated deploy and instead use a manual =workflow_dispatch= deploy that you run from Actions.
