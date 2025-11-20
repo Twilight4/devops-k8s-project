@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: twilight4/api:0.1.0
+          image: twilight4/api-service:0.1.0
           ports:
             - containerPort: 3000
           env:

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: users
-          image: twilight4/users:0.1.0
+          image: twilight4/users-service:0.1.0
           ports:
             - containerPort: 3001
           readinessProbe:

@@ -2,7 +2,7 @@ global:
   ingressHost: micro.local
 
 users:
-  image: "twilight4/users"
+  image: "twilight4/users-service"
   tag: "0.1.0"
   replicas: 2
   readiness:
@@ -24,7 +24,7 @@ users:
     targetCPUUtilization: 50
 
 orders:
-  image: "twilight4/orders"
+  image: "twilight4/orders-service"
   tag: "0.1.0"
   replicas: 2
   readiness:
@@ -62,7 +62,7 @@ apiGateway:
   liveness:
     initialDelaySeconds: 10
     periodSeconds: 20
-  image: "twilight4/api"
+  image: "twilight4/api-service"
   tag: "0.1.0"
   replicas: 1
   resources:

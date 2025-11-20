@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: orders
-          image: twilight4/orders:0.1.0
+          image: twilight4/orders-service:0.1.0
           ports:
             - containerPort: 3002
           readinessProbe:
