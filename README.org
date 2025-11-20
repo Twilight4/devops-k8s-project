@@ -1,5 +1,6 @@
 * Table of Contents :toc:
 - [[#project-overview][Project overview]]
+  - [[#kubernetes-architecture-diagram][Kubernetes architecture diagram]]
   - [[#quick-prerequisite-checklist][Quick prerequisite checklist]]
   - [[#repo-layout][Repo layout]]
   - [[#optional-manually-build-and-test-locally-minimal-microservices][(Optional) Manually build and test locally minimal microservices]]
@@ -26,8 +27,7 @@
 - *Packaging*: Helm chart for the app
 - *CI/CD*: GitHub Actions to build/push images to DockerHub
 
-** Kubernetes architecture diagram
-![Architecture Diagram](docs/architecture.png)
+** [[./docs/architecture.png][Kubernetes Architecture Diagram]]
 
 ** Quick prerequisite checklist
 Install (locally):
