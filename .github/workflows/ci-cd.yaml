@@ -31,15 +31,15 @@ jobs:
     # Build and push users-service image
     - name: Build and push users-service image
       run: |
-        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/users-service:${{ github.sha.substr(0, 7) }} ./services/users-service
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/users-service:${{ github.sha.substr(0, 7) }}
+        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/users-service:${{ github.sha }} ./services/users-service
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/users-service:${{ github.sha }}
     # Build and push orders-service image
     - name: Build and push orders-service image
       run: |
-        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/orders-service:${{ github.sha.substr(0, 7) }} ./services/orders-service
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/orders-service:${{ github.sha.substr(0, 7) }}
+        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/orders-service:${{ github.sha }} ./services/orders-service
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/orders-service:${{ github.sha }}
     # Build and push api-gateway image
     - name: Build and push api-gateway image
       run: |
-        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/api-service:${{ github.sha.substr(0, 7) }} ./services/api-gateway
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/api-service:${{ github.sha.substr(0, 7) }}
+        docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/api-service:${{ github.sha }} ./services/api-gateway
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/api-service:${{ github.sha }}
