@@ -1,4 +1,4 @@
-* Project overview (To-do list)
+* TODO Project overview
 - 3 microservices (small, independent):
   + *api* — front-end API (Node.js / Express)
   + *users* — user service (CRUD, REST)
@@ -66,7 +66,7 @@ devops-k8s-project/
    └─ architecture.png
 #+end_src
 
-* Build and test locally minimal microservice
+* Build and test locally minimal microservices
 It is using Node.js Express service to replicate for =api=, =users=, =orders=.
 
 #+begin_src shell
@@ -110,7 +110,56 @@ curl http://localhost:3000/orders
 curl http://localhost:3000/health
 #+end_src
 
-* Helm packaging
+* Create Cluster
+** Prerequisite
+Create a secret for DB password:
+#+begin_src shell
+# Create secret
+kubectl create secret generic pg-secret --from-literal=password='changeme'
+#+end_src
+
+For ingress controller, you must modify =/etc/hosts= to point to =micro.local= to the cluster LB:
+#+begin_src shell
+# Make sure /etc/hosts has
+# 192.168.49.2 micro.local
+#+end_src
+
+** Using kind
+#+begin_src shell
+kind create cluster --name micro-cluster
+
+# If using nginx-ingress for local
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.1/deploy/static/provider/kind/deploy.yaml
+
+# Build images locally
+docker build -t twilight4/users:0.1.0 ./services/users-service
+docker build -t twilight4/api:0.1.0 ./services/api-gateway
+docker build -t twilight4/orders:0.1.0 ./services/orders-service
+# OR pull from dockerhub
+
+# Verify images were built and load into kind
+docker images | grep twilight4
+kind load docker-image twilight4/users:0.1.0 --name micro-cluster
+#+end_src
+
+** Using minikube
+#+begin_src shell
+minikube start
+minikube addons enable ingress
+
+# Build image locally
+eval $(minikube docker-env)
+docker build -t twilight4/users:0.1.0 ./services/users-service
+docker build -t twilight4/api:0.1.0 ./services/api-gateway
+docker build -t twilight4/orders:0.1.0 ./services/orders-service
+# OR pull from dockerhub
+
+# Verify images were built
+docker images | grep twilight4
+#+end_src
+
+* Deploy Cluster
+** Using Helm packaging
 #+begin_src shell
 # Install
 helm install my-micro charts/microservices -n demo --create-namespace
@@ -122,55 +171,20 @@ helm upgrade my-micro charts/microservices -n demo
 helm uninstall my-micro -n demo
 #+end_src
 
-* Local cluster — create + deploy
-Create a secret for DB password:
+** Using kubectl
 #+begin_src shell
-# Create secret
-kubectl create secret generic pg-secret --from-literal=password='changeme'
-#+end_src
-
-Using kind:
-#+begin_src shell
-kind create cluster --name micro-cluster
-
-# If using nginx-ingress for local:
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.1/deploy/static/provider/kind/deploy.yaml
-
-# Build images locally and load into kind:
-docker build -t twilight4/users:0.1.0 ./services/users-service
-kind load docker-image twilight4/users:0.1.0 --name micro-cluster
-#+end_src
-
-Using minikube:
-#+begin_src shell
-minikube start
-minikube addons enable ingress
-
-# Build image into minikube (locally)
-eval $(minikube docker-env)
-docker build -t twilight4/users:0.1.0 ./services/users-service
-docker build -t twilight4/api:0.1.0 ./services/api-gateway
-docker build -t twilight4/orders:0.1.0 ./services/orders-service
-
-# Verify images were built
-docker images | grep twilight4
-#+end_src
-
-For ingress controller, you must modify =/etc/hosts= to point to =micro.local= to the cluster LB
-Deploy and test endpoints:
-#+begin_src shell
-# Make sure /etc/hosts has
-# 192.168.49.2 micro.local
-
 # Apply manifests
 kubectl apply -f deploy/
 kubectl get pods -n default
 kubectl get ingress
+#+end_src
 
+** Test endpoints
+#+begin_src shell
 # Test URLs
 minikube service list
 
-# Users and Orders service (through API Gateway or directly)
+# Users and Orders service (through API Gateway)
 curl http://micro.local/api/users
 curl http://micro.local/api/orders
 # API Gateway health
