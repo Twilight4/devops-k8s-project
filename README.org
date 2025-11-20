@@ -27,7 +27,7 @@
 - *CI/CD*: GitHub Actions to build/push images to DockerHub
 
 ** Kubernetes architecture diagram
-[[./docs/architecture.png][Architecture Diagram]]
+![Architecture Diagram](docs/architecture.png)
 
 ** Quick prerequisite checklist
 Install (locally):
