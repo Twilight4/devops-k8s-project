@@ -31,13 +31,9 @@ devops-k8s-project/
 │  └─ microservices/
 ├─ deploy/
 │  ├─ users-deployment.yaml
-│  ├─ users-service.yaml
 │  ├─ orders-deployment.yaml
-│  ├─ orders-service.yaml
 │  ├─ api-gateway-deployment.yaml
-│  ├─ api-gateway-service.yaml
 │  ├─ postgres-deployment.yaml
-│  ├─ postgres-service.yaml
 │  ├─ postgres-pvc.yaml
 │  └─ ingress.yaml
 ├─ services/
