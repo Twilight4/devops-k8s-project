@@ -18,6 +18,10 @@ users:
     requests:
       cpu: "100m"
       memory: "128Mi"
+  hpa:
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilization: 50
 
 orders:
   image: "twilight4/orders"
@@ -36,6 +40,10 @@ orders:
     requests:
       cpu: "100m"
       memory: "128Mi"
+  hpa:
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilization: 50
 
 ingress:
   name: microservices-ingress

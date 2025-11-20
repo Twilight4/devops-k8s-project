@@ -1,0 +1,31 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: orders-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: orders
+  minReplicas: {{ .Values.orders.hpa.minReplicas }}
+  maxReplicas: {{ .Values.orders.hpa.maxReplicas }} 
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: {{ .Values.orders.hpa.targetCPUUtilization }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders
+spec:
+  selector:
+    app: orders
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3002
+  type: ClusterIP
