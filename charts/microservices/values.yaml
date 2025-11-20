@@ -72,6 +72,10 @@ apiGateway:
     requests:
       cpu: "100m"
       memory: "128Mi"
+  hpa:
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilization: 50
 
 postgres:
   image: "postgres"
