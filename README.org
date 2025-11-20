@@ -241,13 +241,19 @@ kubectl get ingress
 
 *** Test endpoints
 #+begin_src shell
-# Test URLs
-minikube service list
+# Expected output from orders service
+└─$ curl http://micro.local/api/orders
+[
+  { "id": 101, "item": "Laptop", "qty": 1 },
+  { "id": 102, "item": "Phone", "qty": 2 }
+]
 
-# Users and Orders service (through API Gateway)
-curl http://micro.local/api/users
-curl http://micro.local/api/orders
-# API Gateway health
-curl http://micro.local/api/health
+# Expected output from users service
+└─$ curl http://micro.local/api/users
+{ "api": "api-gateway", "users": [{ "id": 1, "name": "Alice" }] }
+
+# Expected output from API Gateway health
+└─$ curl http://micro.local/api/health
+{"status":"ok"}
 #+end_src
 
