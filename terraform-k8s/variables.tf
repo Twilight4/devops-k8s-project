@@ -1,42 +1,245 @@
 variable "kubeconfig_path" {
-  type    = string
-  default = "~/.kube/config"
   description = "Path to kubeconfig that Terraform should use"
+  type        = string
+  default     = "~/.kube/config"
 }
 
-variable "ingress_host" {
-  type    = string
-  default = "micro.local"
+variable "namespace" {
+  description = "Kubernetes namespace to create resources in"
+  type        = string
+  default     = "demo"
 }
 
-# Users service
-variable "users_image" { type = string; default = "twilight4/users" }
-variable "users_tag"   { type = string; default = "0.1.0" }
-variable "users_replicas" { type = number; default = 2 }
-
-# Orders service
-variable "orders_image" { type = string; default = "twilight4/orders" }
-variable "orders_tag"   { type = string; default = "0.1.0" }
-variable "orders_replicas" { type = number; default = 2 }
-
-# API Gateway
-variable "api_image" { type = string; default = "twilight4/api" }
-variable "api_tag"   { type = string; default = "0.1.0" }
-variable "api_replicas" { type = number; default = 1 }
-
-# Postgres
-variable "postgres_image" { type = string; default = "postgres" }
-variable "postgres_tag"   { type = string; default = "15" }
-variable "postgres_replicas" { type = number; default = 1 }
-variable "postgres_storage" { type = string; default = "1Gi" }
-variable "postgres_password" { type = string; default = "supersecret" }
-
-# Resource stubs (optional)
-variable "default_limits" {
-  type = map(string)
-  default = { cpu = "200m", memory = "256Mi" }
+variable "global" {
+  description = "Global values"
+  type = object({
+    ingressHost = string
+  })
+  default = {
+    ingressHost = "micro.local"
+  }
 }
-variable "default_requests" {
-  type = map(string)
-  default = { cpu = "100m", memory = "128Mi" }
+
+variable "users" {
+  description = "Users service configuration"
+  type = object({
+    image    = string
+    tag      = string
+    replicas = number
+
+    readiness = object({
+      initialDelaySeconds = number
+      periodSeconds       = number
+    })
+
+    liveness = object({
+      initialDelaySeconds = number
+      periodSeconds       = number
+    })
+
+    resources = object({
+      limits = object({
+        cpu    = string
+        memory = string
+      })
+      requests = object({
+        cpu    = string
+        memory = string
+      })
+    })
+
+    hpa = object({
+      minReplicas          = number
+      maxReplicas          = number
+      targetCPUUtilization = number
+    })
+  })
+  default = {
+    image    = "twilight4/users-service"
+    tag      = "0.1.0"
+    replicas = 2
+    readiness = {
+      initialDelaySeconds = 5
+      periodSeconds       = 10
+    }
+    liveness = {
+      initialDelaySeconds = 10
+      periodSeconds       = 20
+    }
+    resources = {
+      limits   = { cpu = "200m", memory = "256Mi" }
+      requests = { cpu = "100m", memory = "128Mi" }
+    }
+    hpa = {
+      minReplicas          = 1
+      maxReplicas          = 5
+      targetCPUUtilization = 50
+    }
+  }
+}
+
+variable "orders" {
+  description = "Orders service configuration"
+  type = object({
+    image    = string
+    tag      = string
+    replicas = number
+
+    readiness = object({
+      initialDelaySeconds = number
+      periodSeconds       = number
+    })
+
+    liveness = object({
+      initialDelaySeconds = number
+      periodSeconds       = number
+    })
+
+    resources = object({
+      limits = object({
+        cpu    = string
+        memory = string
+      })
+      requests = object({
+        cpu    = string
+        memory = string
+      })
+    })
+
+    hpa = object({
+      minReplicas          = number
+      maxReplicas          = number
+      targetCPUUtilization = number
+    })
+  })
+  default = {
+    image    = "twilight4/orders-service"
+    tag      = "0.1.0"
+    replicas = 2
+    readiness = {
+      initialDelaySeconds = 5
+      periodSeconds       = 10
+    }
+    liveness = {
+      initialDelaySeconds = 10
+      periodSeconds       = 20
+    }
+    resources = {
+      limits   = { cpu = "200m", memory = "256Mi" }
+      requests = { cpu = "100m", memory = "128Mi" }
+    }
+    hpa = {
+      minReplicas          = 1
+      maxReplicas          = 5
+      targetCPUUtilization = 50
+    }
+  }
+}
+
+variable "apiGateway" {
+  description = "API gateway configuration"
+  type = object({
+    serviceName = string
+    servicePort = number
+
+    env = object({
+      usersUrl  = string
+      ordersUrl = string
+    })
+
+    readiness = object({
+      initialDelaySeconds = number
+      periodSeconds       = number
+    })
+
+    liveness = object({
+      initialDelaySeconds = number
+      periodSeconds       = number
+    })
+
+    image    = string
+    tag      = string
+    replicas = number
+
+    resources = object({
+      limits = object({
+        cpu    = string
+        memory = string
+      })
+      requests = object({
+        cpu    = string
+        memory = string
+      })
+    })
+
+    hpa = object({
+      minReplicas          = number
+      maxReplicas          = number
+      targetCPUUtilization = number
+    })
+  })
+  default = {
+    serviceName = "api-gateway-service"
+    servicePort = 3000
+    env = {
+      usersUrl  = "http://users:80"
+      ordersUrl = "http://orders:80"
+    }
+    readiness = {
+      initialDelaySeconds = 5
+      periodSeconds       = 10
+    }
+    liveness = {
+      initialDelaySeconds = 10
+      periodSeconds       = 20
+    }
+    image    = "twilight4/api-service"
+    tag      = "0.1.0"
+    replicas = 1
+    resources = {
+      limits   = { cpu = "200m", memory = "256Mi" }
+      requests = { cpu = "100m", memory = "128Mi" }
+    }
+    hpa = {
+      minReplicas          = 1
+      maxReplicas          = 5
+      targetCPUUtilization = 50
+    }
+  }
+}
+
+variable "postgres" {
+  description = "Postgres configuration"
+  type = object({
+    image    = string
+    tag      = string
+    replicas = number
+    storage  = string
+    resources = object({
+      limits = object({
+        cpu    = string
+        memory = string
+      })
+      requests = object({
+        cpu    = string
+        memory = string
+      })
+    })
+  })
+  default = {
+    image    = "postgres"
+    tag      = "15"
+    replicas = 1
+    storage  = "1Gi"
+    resources = {
+      limits   = { cpu = "300m", memory = "512Mi" }
+      requests = { cpu = "150m", memory = "256Mi" }
+    }
+  }
+}
+
+variable "postgres_password" {
+  description = "Postgres password (use secrets in real environments)"
+  type        = string
+  default     = "supersecret"
 }
