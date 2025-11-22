@@ -46,7 +46,6 @@ orders:
     targetCPUUtilization: 50
 
 ingress:
-  name: microservices-ingress
   className: nginx
   host: micro.local
 
