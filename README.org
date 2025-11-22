@@ -19,7 +19,7 @@
 - *Persistence*: PersistentVolumeClaim for Postgres
 - *Deployment*: Deployments + Services + Horizontal Pod Autoscaler (HPA)
 - *Packaging*: Helm chart for the app
-- *CI/CD*: GitHub Actions to install dependencies, build and push images to DockerHub
+- *CI/CD*: GitHub Actions to install dependencies, build and push images to DockerHub using =workflow_dispatch=
 
 ** [[./docs/architecture.png][Kubernetes Architecture Diagram]]
 #+begin_src shell
