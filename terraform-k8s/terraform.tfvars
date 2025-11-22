@@ -1,0 +1,105 @@
+kubeconfig_path = "~/.kube/config"
+namespace       = "demo"
+
+# global
+global = {
+  ingressHost = "micro.local"
+}
+
+# users
+users = {
+  image    = "twilight4/users-service"
+  tag      = "0.1.0"
+  replicas = 2
+  readiness = {
+    initialDelaySeconds = 5
+    periodSeconds       = 10
+  }
+  liveness = {
+    initialDelaySeconds = 10
+    periodSeconds       = 20
+  }
+  resources = {
+    limits   = { cpu = "200m", memory = "256Mi" }
+    requests = { cpu = "100m", memory = "128Mi" }
+  }
+  hpa = {
+    minReplicas          = 1
+    maxReplicas          = 5
+    targetCPUUtilization = 50
+  }
+}
+
+# orders
+orders = {
+  image    = "twilight4/orders-service"
+  tag      = "0.1.0"
+  replicas = 2
+  readiness = {
+    initialDelaySeconds = 5
+    periodSeconds       = 10
+  }
+  liveness = {
+    initialDelaySeconds = 10
+    periodSeconds       = 20
+  }
+  resources = {
+    limits   = { cpu = "200m", memory = "256Mi" }
+    requests = { cpu = "100m", memory = "128Mi" }
+  }
+  hpa = {
+    minReplicas          = 1
+    maxReplicas          = 5
+    targetCPUUtilization = 50
+  }
+}
+
+# ingress / api
+ingress = {
+  name      = "microservices-ingress"
+  className = "nginx"
+  host      = "micro.local"
+}
+
+apiGateway = {
+  serviceName = "api-gateway-service"
+  servicePort = 3000
+  env = {
+    usersUrl  = "http://users:80"
+    ordersUrl = "http://orders:80"
+  }
+  readiness = {
+    initialDelaySeconds = 5
+    periodSeconds       = 10
+  }
+  liveness = {
+    initialDelaySeconds = 10
+    periodSeconds       = 20
+  }
+  image    = "twilight4/api-service"
+  tag      = "0.1.0"
+  replicas = 1
+  resources = {
+    limits   = { cpu = "200m", memory = "256Mi" }
+    requests = { cpu = "100m", memory = "128Mi" }
+  }
+  hpa = {
+    minReplicas          = 1
+    maxReplicas          = 5
+    targetCPUUtilization = 50
+  }
+}
+
+# postgres
+postgres = {
+  image    = "postgres"
+  tag      = "15"
+  replicas = 1
+  storage  = "1Gi"
+  resources = {
+    limits   = { cpu = "300m", memory = "512Mi" }
+    requests = { cpu = "150m", memory = "256Mi" }
+  }
+}
+
+postgres_password = "supersecret"
