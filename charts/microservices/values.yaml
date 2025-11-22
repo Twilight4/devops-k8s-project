@@ -81,6 +81,7 @@ postgres:
   tag: "15"
   replicas: 1
   storage: "1Gi"
+  password: "changeme"
   resources:
     limits:
       cpu: "300m"

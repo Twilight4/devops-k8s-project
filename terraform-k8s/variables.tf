@@ -241,7 +241,7 @@ variable "postgres" {
 }
 
 variable "postgres_password" {
-  description = "Postgres password (use secrets in real environments)"
+  description = "Postgres password"
   type        = string
   default     = "changeme"
 }
