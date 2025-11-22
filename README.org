@@ -13,14 +13,14 @@
   + *api* — front-end API (Node.js / Express)
   + *users* — user service (CRUD, REST)
   + *orders* — order service (CRUD, REST)
-- *Database*: PostgreSQL (one central DB or one per service — start with a single DB via PVC)
+- *Database*: PostgreSQL
 - *Ingress*: HTTP routing with host/path rules
 - *Config*: ConfigMaps & Secrets
 - *Persistence*: PersistentVolumeClaim for Postgres
 - *Deployment*: Deployments + Services + Horizontal Pod Autoscaler (HPA)
 - *Packaging*: Helm chart for the app
+- *Provisioning*: Full terraform infrastructure provisioning for Kubernetes
 - *CI/CD*: GitHub Actions to install dependencies, build and push images to DockerHub using =workflow_dispatch=
-- *Terraform*: Full infrastructure provisioning for Kubernetes
 
 ** [[./docs/architecture.png][Kubernetes Architecture Diagram]]
 #+begin_src shell
