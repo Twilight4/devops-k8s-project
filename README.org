@@ -20,6 +20,7 @@
 - *Deployment*: Deployments + Services + Horizontal Pod Autoscaler (HPA)
 - *Packaging*: Helm chart for the app
 - *CI/CD*: GitHub Actions to install dependencies, build and push images to DockerHub using =workflow_dispatch=
+- *Terraform*: Full infrastructure provisioning for Kubernetes
 
 ** [[./docs/architecture.png][Kubernetes Architecture Diagram]]
 #+begin_src shell
@@ -53,10 +54,11 @@ Additional:
 ** Quick Prerequisite Checklist
 Install (locally):
 - git
-- Docker
+- docker
 - kubectl
 - minikube or kind
 - helm (v3)
+- terraform
   
 ** Repository Layout
 #+begin_src shell
@@ -102,6 +104,10 @@ devops-k8s-project/
 │     ├─ Dockerfile
 │     ├─ src/
 │     └─ package.json
+├─ terraform-k8s/
+│  ├─ main.tf
+│  ├─ terraform.tfvars
+│  └─ variables.tf
 └─ docs/
    └─ architecture.png
 #+end_src
@@ -162,19 +168,14 @@ Clone the repo:
 git clone --depth 1 https://github.com/Twilight4/devops-k8s-project.git && cd devops-k8s-project/
 #+end_src
 
-Create a secret for DB password:
-#+begin_src shell
-# Create secret
-kubectl create secret generic pg-secret --from-literal=password='changeme' -n <demo/default>
-#+end_src
-
 For ingress controller, you must modify =/etc/hosts= to point to =micro.local= to the cluster LB:
 #+begin_src shell
-# Make sure /etc/hosts has
-# 192.168.49.2 micro.local
+# Put the IP address of the ingress cluster LB
+# To check the ingress IP address: kubectl get ingress
+sudo sh -c 'echo "127.0.0.1 micro.local" >> /etc/hosts"'
 #+end_src
 
-*** Using Kind
+*** Via Kind
 #+begin_src shell
 kind create cluster --name micro-cluster
 
@@ -198,7 +199,7 @@ kind load docker-image twilight4/api:0.1.0 --name micro-cluster
 kind load docker-image twilight4/orders:0.1.0 --name micro-cluster
 #+end_src
 
-*** Using Minikube
+*** Via Minikube
 #+begin_src shell
 minikube start
 minikube addons enable ingress
@@ -219,7 +220,7 @@ docker images | grep twilight4
 #+end_src
 
 ** Deploy Cluster
-*** Using Helm packaging
+*** Via Helm packaging
 #+begin_src shell
 # Install
 helm install my-micro charts/microservices -n demo --create-namespace
@@ -231,16 +232,38 @@ helm upgrade my-micro charts/microservices -n demo
 helm uninstall my-micro -n demo
 #+end_src
 
-*** Using kubectl
+*** Via Terraform
+#+begin_src shell
+# Change directory
+cd terraform-k8s/
+
+# Initialize terraform
+terraform init
+
+# Review the planned configuration
+terraform plan -out plan.tfplan
+
+# Apply the terraform configuration
+terraform apply plan.tfplan
+
+# Delete applied terraform configuration
+terraform destroy
+#+end_src
+
+*** Via kubectl
 #+begin_src shell
 # Apply manifests
 kubectl apply -f deploy/
-kubectl get pods -n default
-kubectl get ingress
 #+end_src
 
 *** Test endpoints
 #+begin_src shell
+# Verify deployment
+kubectl get nodes -n demo
+kubectl get pods -n demo
+kubectl get svc -n demo
+kubectl get ingress -n demo
+
 # Expected output from orders service
 └─$ curl http://micro.local/api/orders
 [
