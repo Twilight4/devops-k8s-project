@@ -14,9 +14,11 @@ variable "global" {
   description = "Global values"
   type = object({
     ingressHost = string
+    className   = string
   })
   default = {
     ingressHost = "micro.local"
+    className   = "nginx"
   }
 }
 
@@ -241,5 +243,5 @@ variable "postgres" {
 variable "postgres_password" {
   description = "Postgres password (use secrets in real environments)"
   type        = string
-  default     = "supersecret"
+  default     = "changeme"
 }

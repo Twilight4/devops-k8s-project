@@ -4,6 +4,7 @@ namespace       = "demo"
 # global
 global = {
   ingressHost = "micro.local"
+  className   = "nginx"
 }
 
 # users
@@ -54,13 +55,6 @@ orders = {
   }
 }
 
-# ingress / api
-ingress = {
-  name      = "microservices-ingress"
-  className = "nginx"
-  host      = "micro.local"
-}
-
 apiGateway = {
   serviceName = "api-gateway-service"
   servicePort = 3000
@@ -102,4 +96,4 @@ postgres = {
   }
 }
 
-postgres_password = "supersecret"
+postgres_password = "changeme"
