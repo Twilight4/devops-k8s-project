@@ -5,8 +5,7 @@
 /services/orders-service/node_modules/
 /services/orders-service/package-lock.json
 /terraform-k8s/.terraform.lock.hcl
-/terraform-k8s/terraform.tfstate
-/terraform-k8s/terraform.tfstate.backup
-/terraform-k8s/terraform.lock.hcl
+/terraform-k8s/*.tfstate
+/terraform-k8s/*.tfstate.backup
 /terraform-k8s/.terraform/
 /terraform-k8s/terraform.tfplan
