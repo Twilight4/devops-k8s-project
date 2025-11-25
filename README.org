@@ -171,6 +171,7 @@ devops-k8s-project/
 │  ├─ terraform.tf
 │  ├─ terraform.tfvars
 │  └─ variables.tf
+│  └─ outputs.tf
 └─ docs/
    └─ architecture.png
 #+end_src
