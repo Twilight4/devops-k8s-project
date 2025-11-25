@@ -235,8 +235,8 @@ git clone --depth 1 https://github.com/Twilight4/devops-k8s-project.git && cd de
 For ingress controller, you must modify =/etc/hosts= to point to =micro.local= to the cluster LB:
 #+begin_src shell
 # Put the IP address of the ingress cluster LB
-# To check the ingress IP address: kubectl get ingress
-sudo sh -c 'echo "127.0.0.1 micro.local" >> /etc/hosts"'
+# To check the ingress IP address: kubectl get ingress -o yaml
+sudo sh -c 'echo "<CLUSTER_LB_IP_ADDRESS> micro.local" >> /etc/hosts"'
 #+end_src
 
 *** Via Kind
