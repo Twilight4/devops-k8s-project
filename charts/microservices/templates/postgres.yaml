@@ -14,8 +14,9 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1000
-        fsGroup: 1000
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
         seccompProfile:
           type: RuntimeDefault
       containers:
@@ -32,14 +33,6 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: data
-          securityContext:
-            runAsNonRoot: true
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            runAsUser: 1000
-            capabilities:
-              drop:
-                - ALL
           resources:
 {{ toYaml .Values.postgres.resources | indent 12 }}
       volumes:
