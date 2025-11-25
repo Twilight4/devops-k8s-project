@@ -239,9 +239,3 @@ variable "postgres" {
     }
   }
 }
-
-variable "postgres_password" {
-  description = "Postgres password"
-  type        = string
-  default     = "changeme"
-}

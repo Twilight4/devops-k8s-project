@@ -1,11 +1,17 @@
 # ----------------- POSTGRES (secret + pvc + deployment + svc) -----------------
+resource "random_password" "pg_password" {
+  length  = 24
+  special = true
+}
+
 resource "kubernetes_secret" "pg" {
   metadata {
     name      = "pg-secret"
     namespace = kubernetes_namespace.demo.metadata[0].name
   }
   data = {
-    password = base64encode(var.postgres_password)
+    # provider expects base64-encoded values in `data`
+    password = base64encode(random_password.pg_password.result)
   }
   type = "Opaque"
 }

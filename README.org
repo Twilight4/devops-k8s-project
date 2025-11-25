@@ -22,6 +22,7 @@
   + Default =uid= for containers
   + Files created by container will be accessible
   + Use container runtime default =seccomp= profile
+  + For terraform config, applied dynamic DB password generation 
 - *Persistence*: PersistentVolumeClaim for Postgres
 - *Deployment*: Deployments + Services + Horizontal Pod Autoscaler (HPA)
 - *Packaging*: Helm chart for the app
