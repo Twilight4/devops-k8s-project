@@ -14,6 +14,12 @@ spec:
       labels:
         app: api-gateway
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: api-gateway
           image: "{{ .Values.apiGateway.image }}:{{ .Values.apiGateway.tag }}"
@@ -24,6 +30,16 @@ spec:
               value: "{{ .Values.apiGateway.env.usersUrl }}"
             - name: ORDERS_URL
               value: "{{ .Values.apiGateway.env.ordersUrl }}"
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsUser: 1000
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           readinessProbe:
             httpGet:
               path: /health

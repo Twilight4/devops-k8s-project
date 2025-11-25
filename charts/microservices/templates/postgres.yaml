@@ -12,6 +12,12 @@ spec:
       labels:
         app: postgres
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: postgres
           image: "{{ .Values.postgres.image }}:{{ .Values.postgres.tag }}"
@@ -26,6 +32,14 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: data
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsUser: 1000
+            capabilities:
+              drop:
+                - ALL
           resources:
 {{ toYaml .Values.postgres.resources | indent 12 }}
       volumes:

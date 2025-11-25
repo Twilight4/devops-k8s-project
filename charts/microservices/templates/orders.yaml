@@ -13,12 +13,28 @@ spec:
     metadata:
       labels:
         app: orders
-    spec:
+    spec
+      securityContext:
+        runAsNonRoot: true    
+        runAsUser: 1000       
+        fsGroup: 1000         
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: orders
           image: "{{ .Values.orders.image }}:{{ .Values.orders.tag }}"
           ports:
             - containerPort: 3002
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsUser: 1000
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           readinessProbe:
             httpGet:
               path: /health

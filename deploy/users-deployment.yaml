@@ -14,11 +14,27 @@ spec:
       labels:
         app: users
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: users
           image: twilight4/users-service:0.1.0
           ports:
             - containerPort: 3001
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsUser: 1000
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           readinessProbe:
             httpGet:
               path: /health

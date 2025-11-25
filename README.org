@@ -17,6 +17,11 @@
 - *Database*: PostgreSQL
 - *Ingress*: HTTP routing with host/path rules
 - *Config*: ConfigMaps & Secrets
+- *Security best practices* (ex. for pods):
+  + Ensure processes run as non-root
+  + Default =uid= for containers
+  + Files created by container will be accessible
+  + Use container runtime default =seccomp= profile
 - *Persistence*: PersistentVolumeClaim for Postgres
 - *Deployment*: Deployments + Services + Horizontal Pod Autoscaler (HPA)
 - *Packaging*: Helm chart for the app
