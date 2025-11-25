@@ -2,6 +2,7 @@
 - [[#project-overview][Project Overview]]
   - [[#kubernetes-architecture-diagram][Kubernetes Architecture Diagram]]
   - [[#quick-prerequisite-checklist][Quick Prerequisite Checklist]]
+  - [[#why-terraform-k8s-helm-postgresql][Why Terraform, K8s, Helm, PostgreSQL]]
   - [[#repository-layout][Repository Layout]]
 - [[#create-and-deploy-kubernetes-cluster-locally][Create and deploy kubernetes cluster locally]]
   - [[#optional-manually-build-and-test-locally-minimal-microservices][(Optional) Manually build and test locally minimal microservices]]
@@ -60,6 +61,58 @@ Install (locally):
 - helm (v3)
 - terraform
   
+** Why Terraform, K8s, Helm, PostgreSQL
+*** Why Terraform
+Decision: Use Terraform as the primary infrastructure-as-code tool.
+
+Context:
+- Terraform supports multi-cloud and multi-provider workflows and has mature providers for Kubernetes, cloud platforms, and secret managers.
+- Terraform state and variable system allow predictable, reproducible infra provisioning.
+
+Consequences:
+- A single source of truth for infra (namespaces, services, deployments) simplifies automation.
+- Good for reproducible dev/test/stage/prod environments.
+- Need to secure state (S3 + locking or Terraform Cloud) and manage secret lifecycle carefully.
+
+*** Why Kubernetes
+Decision: Use Kubernetes for container orchestration.
+
+Context:
+- Kubernetes provides scalable scheduling, Service discovery, rolling updates, liveness/readiness checks, and integration with cloud providers.
+- Supports declarative workloads, autoscaling, and dynamic resource management.
+
+Consequences:
+- Enables microservice scaling (HPAs), self-healing, and standardized deployment templates (YAML/Helm).
+- Requires operational knowledge: ingress, CNI, storage classes, monitoring, and RBAC.
+
+*** Why PostgreSQL
+Decision: Use PostgreSQL as the primary relational database.
+
+Context:
+- PostgreSQL is open-source, ACID-compliant, rich SQL feature set, strong community, and wide tooling support.
+- Suits this project’s need for relational storage, joins, transactions, and constraints.
+
+Consequences:
+- Use a single Postgres instance (PVC-backed) for this demo to keep infra simple.
+- In production consider per-service DBs, replication, backups, and managed DB offerings.
+
+*** Why Helm / Why not Helm
+Decision: Package app with Helm, but manage cluster infra optionally with Terraform.
+
+Context:
+- Helm simplifies templating and packaging application manifests (values.yaml driven).
+- Terraform is used here to manage cluster-level resources and optionally deploy chart resources if desired.
+
+Why Helm:
+- Parameterized templates, ecosystem (helm repo), easy release upgrades.
+
+Why not Helm-only:
+- Helm focuses on app manifests; Terraform can manage external infra (cloud providers, DNS, storage classes) and keep state in a single place.
+- In some environments Terraform-first + Helm-for-apps (or Helm provider inside Terraform) is a good hybrid approach.
+
+Consequences:
+- Keeps app packaging flexible while allowing infra automation and secret management with Terraform.
+
 ** Repository Layout
 #+begin_src shell
 devops-k8s-project/
@@ -258,6 +311,9 @@ terraform destroy
 #+begin_src shell
 # Apply manifests
 kubectl apply -f deploy/
+
+# Uninstall manifests
+kubectl delete -f deploy/
 #+end_src
 
 *** Test endpoints
