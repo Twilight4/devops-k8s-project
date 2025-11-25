@@ -193,7 +193,7 @@ npm install                         # Run this command to generate package-lock.
 docker build -t twilight4/users:0.1.0 .
 docker run -p 3001:3001 twilight4/users:0.1.0
 
-# test the users image
+# Test the users image
 docker ps
 curl http://localhost:3001/users
 
@@ -203,7 +203,7 @@ npm install                        # Run this command to generate package-lock.j
 docker build -t twilight4/orders:0.1.0 .
 docker run -p 3002:3002 twilight4/orders:0.1.0
 
-# test the orders image
+# Test the orders image
 docker ps
 curl http://localhost:3002/orders
 
@@ -217,7 +217,7 @@ docker run -it -p 3000:3000 \
   -e ORDERS_URL=http://172.17.0.1:3002 \
   twilight4/api:0.1.0
 
-# test the api-gateway image
+# Test the api-gateway image
 docker ps
 curl http://localhost:3000/users
 curl http://localhost:3000/orders
