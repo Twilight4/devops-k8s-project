@@ -105,7 +105,11 @@ devops-k8s-project/
 │     ├─ src/
 │     └─ package.json
 ├─ terraform-k8s/
+│  ├─ databases.tf
 │  ├─ main.tf
+│  ├─ microservices.tf
+│  ├─ networking.tf
+│  ├─ terraform.tf
 │  ├─ terraform.tfvars
 │  └─ variables.tf
 └─ docs/
