@@ -19,11 +19,32 @@ resource "kubernetes_deployment" "users" {
       }
 
       spec {
+        security_context {
+          run_as_user         = 1000
+          run_as_group        = 3000
+          fs_group            = 2000
+          supplemental_groups = [4000]
+        }
+
         container {
           name  = "users"
           image = "${var.users.image}:${var.users.tag}"
           port {
             container_port = 3001
+          }
+
+          security_context {
+            read_only_root_filesystem  = true
+            allow_privilege_escalation = false
+            run_as_non_root            = true
+
+            seccomp_profile {
+              type = "RuntimeDefault"
+            }
+
+            capabilities {
+              drop = ["ALL"]
+            }
           }
 
           readiness_probe {
@@ -118,11 +139,32 @@ resource "kubernetes_deployment" "orders" {
       }
 
       spec {
+        security_context {
+          run_as_user         = 1000
+          run_as_group        = 3000
+          fs_group            = 2000
+          supplemental_groups = [4000]
+        }
+
         container {
           name  = "orders"
           image = "${var.orders.image}:${var.orders.tag}"
           port {
             container_port = 3002
+          }
+
+          security_context {
+            read_only_root_filesystem  = true
+            allow_privilege_escalation = false
+            run_as_non_root            = true
+
+            seccomp_profile {
+              type = "RuntimeDefault"
+            }
+
+            capabilities {
+              drop = ["ALL"]
+            }
           }
 
           readiness_probe {
@@ -217,6 +259,13 @@ resource "kubernetes_deployment" "api" {
       }
 
       spec {
+        security_context {
+          run_as_user         = 1000
+          run_as_group        = 3000
+          fs_group            = 2000
+          supplemental_groups = [4000]
+        }
+
         container {
           name  = "api-gateway"
           image = "${var.apiGateway.image}:${var.apiGateway.tag}"
@@ -231,6 +280,20 @@ resource "kubernetes_deployment" "api" {
           env {
             name  = "ORDERS_URL"
             value = var.apiGateway.env.ordersUrl
+          }
+
+          security_context {
+            read_only_root_filesystem  = true
+            allow_privilege_escalation = false
+            run_as_non_root            = true
+
+            seccomp_profile {
+              type = "RuntimeDefault"
+            }
+
+            capabilities {
+              drop = ["ALL"]
+            }
           }
 
           readiness_probe {
