@@ -326,6 +326,7 @@ kubectl delete -f deploy/
 *** Test endpoints
 #+begin_src shell
 # Verify deployment
+kubectl cluster-info
 kubectl get nodes -n demo
 kubectl get pods -n demo
 kubectl get svc -n demo
