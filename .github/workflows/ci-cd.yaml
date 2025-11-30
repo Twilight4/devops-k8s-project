@@ -1,43 +1,42 @@
 name: CI
 
 on:
+  push:
+    branches: ["main"]
+    tags: "[0-9]*.[0-9]*.[0-9]*"
+    paths:
+      - "services/**/*"
+
+on:
   workflow_dispatch:
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout      
     - uses: actions/checkout@v4
-    # Run npm install in all services
-    - name: Install dependencies for users-service
-      run: |
-        cd services/users-service
-        npm install
-    - name: Install dependencies for orders-service
-      run: |
-        cd services/orders-service
-        npm install
-    - name: Install dependencies for api-gateway
-      run: |
-        cd services/api-gateway
-        npm install
+
     # Login to Docker Hub
     # https://github.com/docker/login-action
     - name: Login to Docker Hub
-      uses: docker/login-action@v2
+      uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
+
     # Build and push users-service image
     - name: Build and push users-service image
       run: |
         docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/users-service:0.1.0 ./services/users-service
         docker push ${{ secrets.DOCKERHUB_USERNAME }}/users-service:0.1.0
+
     # Build and push orders-service image
     - name: Build and push orders-service image
       run: |
         docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/orders-service:0.1.0 ./services/orders-service
         docker push ${{ secrets.DOCKERHUB_USERNAME }}/orders-service:0.1.0
+
     # Build and push api-gateway image
     - name: Build and push api-gateway image
       run: |
