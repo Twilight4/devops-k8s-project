@@ -15,8 +15,8 @@ jobs:
     strategy:
       matrix:
         service:
-          - name: api-gateway
-            path: services/api-gateway
+          - name: api-service
+            path: services/api-service
           - name: orders-service
             path: services/orders-service
           - name: users-service
